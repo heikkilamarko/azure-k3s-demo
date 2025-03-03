@@ -85,8 +85,20 @@ resource "azurerm_network_security_group" "demo" {
   }
 
   security_rule {
-    name                       = "HTTPS"
+    name                       = "HTTP"
     priority                   = 110
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "HTTPS"
+    priority                   = 120
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -98,7 +110,7 @@ resource "azurerm_network_security_group" "demo" {
 
   security_rule {
     name                       = "NATS"
-    priority                   = 120
+    priority                   = 130
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"

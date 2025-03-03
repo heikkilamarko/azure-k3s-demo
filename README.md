@@ -41,7 +41,7 @@ scp azureuser@$(terraform output -raw vm_public_ip):/etc/rancher/k3s/k3s.yaml /p
 ### 2. Set the `KUBECONFIG` Environment Variable
 
 ```bash
-export KUBECONFIG=/path/to/k3s.yaml
+export KUBECONFIG="/path/to/k3s.yaml"
 ```
 
 ### 3. Create an SSH Tunnel
@@ -72,6 +72,33 @@ kubectl delete -f demo/web-app.yaml
 
 ```bash
 sudo sed -i '' '/web-app.com/d' /etc/hosts
+```
+
+### Web App (Let's Encrypt)
+
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.17.0/cert-manager.yaml
+```
+
+```bash
+export ACME_EMAIL="__CHANGE_ME__"
+export INGRESS_HOST="__CHANGE_ME__"
+```
+
+```text
+Create a DNS A record for the domain ($INGRESS_HOST) that points to the public IP address of the VM.
+```
+
+```bash
+cat demo/web-app-letsencrypt.yaml | envsubst | kubectl apply -f -
+```
+
+```bash
+curl -k "https://$INGRESS_HOST"
+```
+
+```bash
+cat demo/web-app-letsencrypt.yaml | envsubst | kubectl delete -f -
 ```
 
 ### NATS Server

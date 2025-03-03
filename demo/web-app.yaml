@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: http-server
+  name: web-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: http-server
+      app: web-app
   template:
     metadata:
       labels:
-        app: http-server
+        app: web-app
     spec:
       containers:
-        - name: http-server
+        - name: web-app
           image: nginx:latest
           ports:
             - containerPort: 80
@@ -21,10 +21,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: http-server
+  name: web-app
 spec:
   selector:
-    app: http-server
+    app: web-app
   ports:
     - protocol: TCP
       port: 80
@@ -34,16 +34,16 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: http-server-ingress
+  name: web-app-ingress
 spec:
   rules:
-    - host: k3sdemo.com
+    - host: web-app.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: http-server
+                name: web-app
                 port:
                   number: 80

@@ -1,12 +1,12 @@
 # Azure K3s Demo
 
-## Generate SSH key
+## Generate SSH Key
 
 ```bash
 ssh-keygen -t rsa -b 4096
 ```
 
-## Create Azure resources with Terraform
+## Create Azure Resources with Terraform
 
 ```bash
 terraform init
@@ -16,68 +16,76 @@ terraform init
 terraform apply
 ```
 
-## Connect to the VM
+## Verify K3s Installation
+
+### 1. Connect to the VM
 
 ```bash
 ssh azureuser@$(terraform output -raw vm_public_ip)
 ```
 
-### Verify K3s installation by listing nodes
+### 2. List the K3s Nodes
 
 ```bash
 sudo kubectl get nodes
 ```
 
-### Exit the VM
+## Establish an SSH Tunnel for K3s API Access
 
-```bash
-exit
-```
-
-## Copy K3s configuration file to local machine
+### 1. Copy the K3s Config File
 
 ```bash
 scp azureuser@$(terraform output -raw vm_public_ip):/etc/rancher/k3s/k3s.yaml /path/to/k3s.yaml
 ```
 
-## Set `KUBECONFIG` environment variable
+### 2. Set the `KUBECONFIG` Environment Variable
 
 ```bash
 export KUBECONFIG=/path/to/k3s.yaml
 ```
 
-## Set up SSH tunnel for K3s API access
+### 3. Create an SSH Tunnel
 
 ```bash
 ssh -L 6443:127.0.0.1:6443 azureuser@$(terraform output -raw vm_public_ip) -N
 ```
 
-## Add `k3sdemo.com` to `/etc/hosts`
+## Deploy the Demo Services
+
+### Web App
 
 ```bash
-sudo sh -c 'echo "$(terraform output -raw vm_public_ip) k3sdemo.com" >> /etc/hosts'
+kubectl apply -f demo/web-app.yaml
 ```
-
-## Deploy the demo application
 
 ```bash
-kubectl apply -f demo-app.yaml
+sudo sh -c 'echo "$(terraform output -raw vm_public_ip) web-app.com" >> /etc/hosts'
 ```
-
-## Test the demo application
 
 ```bash
-curl -k https://k3sdemo.com
+curl -k https://web-app.com
 ```
 
-## Clean up Azure resources
+```bash
+kubectl delete -f demo/web-app.yaml
+```
+
+```bash
+sudo sed -i '' '/web-app.com/d' /etc/hosts
+```
+
+### NATS Server
+
+```bash
+kubectl apply -f demo/nats-server.yaml
+```
+
+```bash
+kubectl delete -f demo/nats-server.yaml
+```
+
+## Clean Up Azure Resources
 
 ```bash
 terraform destroy
-```
-
-## Clean up host entries
-
-```bash
-sudo sed -i '' '/k3sdemo.com/d' /etc/hosts
 ```

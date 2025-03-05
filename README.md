@@ -101,6 +101,39 @@ curl -k "https://$INGRESS_HOST"
 cat demo/web-app-letsencrypt.yaml | envsubst | kubectl delete -f -
 ```
 
+### Web App (Let's Encrypt with GoDaddy)
+
+```bash
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.17.0/cert-manager.yaml
+```
+
+```bash
+helm repo add godaddy-webhook https://snowdrop.github.io/godaddy-webhook
+helm install acme-webhook godaddy-webhook/godaddy-webhook -n cert-manager --set groupName=acme.$INGRESS_HOST
+```
+
+```bash
+export ACME_EMAIL="__CHANGE_ME__"
+export INGRESS_HOST="__CHANGE_ME__"
+export GODADDY_APIKEY="__CHANGE_ME__"
+```
+
+```text
+Create a DNS A record for the domain ($INGRESS_HOST) that points to the public IP address of the VM.
+```
+
+```bash
+cat demo/web-app-letsencrypt-godaddy.yaml | envsubst | kubectl apply -f -
+```
+
+```bash
+curl -k "https://www.$INGRESS_HOST"
+```
+
+```bash
+cat demo/web-app-letsencrypt-godaddy.yaml | envsubst | kubectl delete -f -
+```
+
 ### NATS Server
 
 ```bash

@@ -158,7 +158,25 @@ resource "azurerm_linux_virtual_machine" "demo" {
     version   = "latest"
   }
 
-  custom_data = filebase64("cloud-init.sh")
+  custom_data = base64encode(<<-EOF
+    #!/bin/bash
+    set -euo pipefail
+
+    curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+
+    mkdir -p /etc/rancher/k3s
+
+    cat <<REGISTRIES_EOF > /etc/rancher/k3s/registries.yaml
+    configs:
+      "${azurerm_container_registry.demo.name}.azurecr.io":
+        auth:
+          username: "${azurerm_container_registry.demo.admin_username}"
+          password: "${azurerm_container_registry.demo.admin_password}"
+    REGISTRIES_EOF
+
+    systemctl restart k3s
+  EOF
+  )
 }
 
 output "vm_public_ip" {

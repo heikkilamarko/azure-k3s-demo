@@ -177,6 +177,12 @@ resource "azurerm_linux_virtual_machine" "demo" {
     systemctl restart k3s
   EOF
   )
+
+  lifecycle {
+    ignore_changes = [
+      admin_ssh_key,
+    ]
+  }
 }
 
 output "vm_public_ip" {

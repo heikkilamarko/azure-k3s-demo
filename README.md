@@ -9,11 +9,11 @@ ssh-keygen -t rsa -b 4096
 ## Create Azure Resources with Terraform
 
 ```bash
-terraform init
+terraform -chdir=infra/shared init
 ```
 
 ```bash
-terraform apply
+terraform -chdir=infra/shared apply
 ```
 
 ## Verify K3s Installation
@@ -21,7 +21,7 @@ terraform apply
 ### 1. Connect to the VM
 
 ```bash
-ssh azureuser@$(terraform output -raw vm_public_ip)
+ssh azureuser@$(terraform -chdir=infra/shared output -raw vm_public_ip)
 ```
 
 ### 2. List the K3s Nodes
@@ -35,7 +35,7 @@ sudo kubectl get nodes
 ### 1. Copy the K3s Config File
 
 ```bash
-scp azureuser@$(terraform output -raw vm_public_ip):/etc/rancher/k3s/k3s.yaml /path/to/k3s.yaml
+scp azureuser@$(terraform -chdir=infra/shared output -raw vm_public_ip):/etc/rancher/k3s/k3s.yaml /path/to/k3s.yaml
 ```
 
 ### 2. Set the `KUBECONFIG` Environment Variable
@@ -47,7 +47,7 @@ export KUBECONFIG="/path/to/k3s.yaml"
 ### 3. Create an SSH Tunnel
 
 ```bash
-ssh -L 6443:127.0.0.1:6443 azureuser@$(terraform output -raw vm_public_ip) -N
+ssh -L 6443:127.0.0.1:6443 azureuser@$(terraform -chdir=infra/shared output -raw vm_public_ip) -N
 ```
 
 ## Deploy the Demo Services
@@ -55,11 +55,11 @@ ssh -L 6443:127.0.0.1:6443 azureuser@$(terraform output -raw vm_public_ip) -N
 ### Web App
 
 ```bash
-kubectl apply -f demo/web-app.yaml
+kubectl apply -f k8s/web-app.yaml
 ```
 
 ```bash
-sudo sh -c 'echo "$(terraform output -raw vm_public_ip) web-app.com" >> /etc/hosts'
+sudo sh -c 'echo "$(terraform -chdir=infra/shared output -raw vm_public_ip) web-app.com" >> /etc/hosts'
 ```
 
 ```bash
@@ -67,7 +67,7 @@ curl -k https://web-app.com
 ```
 
 ```bash
-kubectl delete -f demo/web-app.yaml
+kubectl delete -f k8s/web-app.yaml
 ```
 
 ```bash
@@ -90,7 +90,7 @@ Create a DNS A record for the domain ($INGRESS_HOST) that points to the public I
 ```
 
 ```bash
-cat demo/web-app-letsencrypt.yaml | envsubst | kubectl apply -f -
+cat k8s/web-app-letsencrypt.yaml | envsubst | kubectl apply -f -
 ```
 
 ```bash
@@ -98,7 +98,7 @@ curl -k "https://$INGRESS_HOST"
 ```
 
 ```bash
-cat demo/web-app-letsencrypt.yaml | envsubst | kubectl delete -f -
+cat k8s/web-app-letsencrypt.yaml | envsubst | kubectl delete -f -
 ```
 
 ### Web App (Let's Encrypt with GoDaddy)
@@ -123,7 +123,7 @@ Create a DNS A record for the domain ($INGRESS_HOST) that points to the public I
 ```
 
 ```bash
-cat demo/web-app-letsencrypt-godaddy.yaml | envsubst | kubectl apply -f -
+cat k8s/web-app-letsencrypt-godaddy.yaml | envsubst | kubectl apply -f -
 ```
 
 ```bash
@@ -131,21 +131,21 @@ curl -k "https://www.$INGRESS_HOST"
 ```
 
 ```bash
-cat demo/web-app-letsencrypt-godaddy.yaml | envsubst | kubectl delete -f -
+cat k8s/web-app-letsencrypt-godaddy.yaml | envsubst | kubectl delete -f -
 ```
 
 ### NATS Server
 
 ```bash
-kubectl apply -f demo/nats-server.yaml
+kubectl apply -f k8s/nats-server.yaml
 ```
 
 ```bash
-kubectl delete -f demo/nats-server.yaml
+kubectl delete -f k8s/nats-server.yaml
 ```
 
 ## Clean Up Azure Resources
 
 ```bash
-terraform destroy
+terraform -chdir=infra/shared destroy
 ```

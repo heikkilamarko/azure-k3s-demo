@@ -3,6 +3,11 @@ variable "azure_subscription_id" {
   type        = string
 }
 
+variable "location" {
+  description = "The Azure region to deploy resources in. Example: West Europe"
+  type        = string
+}
+
 provider "azurerm" {
   features {}
   subscription_id = var.azure_subscription_id
@@ -10,7 +15,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "demo" {
   name     = "rg-k3s-demo"
-  location = "West Europe"
+  location = var.location
 }
 
 resource "azurerm_user_assigned_identity" "demo" {

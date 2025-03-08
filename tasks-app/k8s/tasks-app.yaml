@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasks-app
+  template:
+    metadata:
+      labels:
+        app: tasks-app
+    spec:
+      initContainers:
+        - name: tasks-app-migrations
+          image: crk3sdemo.azurecr.io/tasks-app-migrations:latest
+          envFrom:
+            - secretRef:
+                name: tasks-app-secret
+      containers:
+        - name: tasks-app
+          image: crk3sdemo.azurecr.io/tasks-app:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: tasks-app-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tasks-app
+spec:
+  selector:
+    app: tasks-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tasks-app
+spec:
+  rules:
+    - host: tasks-app.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: tasks-app
+                port:
+                  number: 80

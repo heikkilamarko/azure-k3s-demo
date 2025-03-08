@@ -49,7 +49,7 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "demo_vm" {
 }
 
 resource "azurerm_postgresql_flexible_server_database" "demo" {
-  name      = "demo_app"
+  name      = "demo"
   server_id = azurerm_postgresql_flexible_server.demo.id
 
   # lifecycle {

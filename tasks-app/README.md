@@ -13,13 +13,13 @@ terraform -chdir=infra apply
 ## Build
 
 ```bash
-./ci.sh
+./ci.sh <docker_image_tag>
 ```
 
 ## Deploy
 
 ```bash
-./cd.sh
+./cd.sh <docker_image_tag>
 ```
 
 ## Test

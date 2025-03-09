@@ -1,4 +1,4 @@
 #!/bin/sh
 set -e
 
-migrate -path /migrations -database $TASKS_APP_CONNECTIONSTRING up
+migrate -path /migrations -database $DB_CONNECTION_STRING up

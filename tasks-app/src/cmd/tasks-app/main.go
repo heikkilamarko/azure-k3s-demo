@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	"log/slog"
@@ -19,7 +18,7 @@ type Task struct {
 
 func getTasksHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rows, err := db.QueryContext(context.Background(), "SELECT id, name, created_at FROM tasks_app.task")
+		rows, err := db.QueryContext(r.Context(), "SELECT id, name, created_at FROM tasks_app.task")
 		if err != nil {
 			slog.Error("failed to query tasks", "error", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -27,7 +26,7 @@ func getTasksHandler(db *sql.DB) http.HandlerFunc {
 		}
 		defer rows.Close()
 
-		var tasks []Task
+		tasks := []Task{}
 		for rows.Next() {
 			var t Task
 			if err := rows.Scan(&t.ID, &t.Name, &t.CreatedAt); err != nil {
@@ -47,13 +46,13 @@ func getTasksHandler(db *sql.DB) http.HandlerFunc {
 }
 
 func main() {
-	dbURL := os.Getenv("TASKS_APP_CONNECTIONSTRING")
-	if dbURL == "" {
+	dbConnectionString := os.Getenv("DB_CONNECTION_STRING")
+	if dbConnectionString == "" {
 		slog.Error("database connection string not set")
 		os.Exit(1)
 	}
 
-	db, err := sql.Open("pgx", dbURL)
+	db, err := sql.Open("pgx", dbConnectionString)
 	if err != nil {
 		slog.Error("failed to connect to database", "error", err)
 		os.Exit(1)

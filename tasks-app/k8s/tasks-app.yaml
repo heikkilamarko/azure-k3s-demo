@@ -14,13 +14,13 @@ spec:
     spec:
       initContainers:
         - name: tasks-app-migrations
-          image: crk3sdemo.azurecr.io/tasks-app-migrations:latest
+          image: crk3sdemo.azurecr.io/tasks-app-migrations:${IMAGE_TAG}
           envFrom:
             - secretRef:
                 name: tasks-app-secret
       containers:
         - name: tasks-app
-          image: crk3sdemo.azurecr.io/tasks-app:latest
+          image: crk3sdemo.azurecr.io/tasks-app:${IMAGE_TAG}
           ports:
             - containerPort: 8080
           envFrom:

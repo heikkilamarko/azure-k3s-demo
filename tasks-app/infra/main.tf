@@ -69,3 +69,7 @@ output "postgresql_administrator_password" {
   value     = azurerm_postgresql_flexible_server.demo.administrator_password
   sensitive = true
 }
+
+output "postgresql_database_name" {
+  value = azurerm_postgresql_flexible_server_database.demo.name
+}

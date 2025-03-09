@@ -91,3 +91,13 @@ kubectl apply -f nats-server.yaml
 ```bash
 kubectl delete -f nats-server.yaml
 ```
+
+## Cron Job
+
+```bash
+kubectl apply -f cron-job.yaml
+```
+
+```bash
+kubectl delete -f cron-job.yaml
+```

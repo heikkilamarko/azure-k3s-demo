@@ -1,5 +1,13 @@
 # Examples
 
+## Prerequisites
+
+Create the Kubernetes namespace where the examples will be deployed:
+
+```bash
+kubectl apply -f namespace.yaml
+```
+
 ## Web App
 
 ```bash
@@ -38,7 +46,7 @@ Create a DNS A record for the domain ($INGRESS_HOST) that points to the public I
 ```
 
 ```bash
-cat web-app-letsencrypt.yaml | envsubst | kubectl apply -f -
+envsubst < web-app-letsencrypt.yaml | kubectl apply -f -
 ```
 
 ```bash
@@ -46,7 +54,7 @@ curl -k "https://$INGRESS_HOST"
 ```
 
 ```bash
-cat web-app-letsencrypt.yaml | envsubst | kubectl delete -f -
+envsubst < web-app-letsencrypt.yaml | kubectl delete -f -
 ```
 
 ## Web App (Let's Encrypt with GoDaddy)
@@ -71,7 +79,7 @@ Create a DNS A record for the domain ($INGRESS_HOST) that points to the public I
 ```
 
 ```bash
-cat web-app-letsencrypt-godaddy.yaml | envsubst | kubectl apply -f -
+envsubst < web-app-letsencrypt-godaddy.yaml | kubectl apply -f -
 ```
 
 ```bash
@@ -79,7 +87,7 @@ curl -k "https://www.$INGRESS_HOST"
 ```
 
 ```bash
-cat web-app-letsencrypt-godaddy.yaml | envsubst | kubectl delete -f -
+envsubst < web-app-letsencrypt-godaddy.yaml | kubectl delete -f -
 ```
 
 ## NATS Server

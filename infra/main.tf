@@ -167,7 +167,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
     #!/bin/bash
     set -euo pipefail
 
-    curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644
+    curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
 
     mkdir -p /etc/rancher/k3s
 
@@ -191,8 +191,10 @@ resource "azurerm_linux_virtual_machine" "demo" {
       valuesContent: |-
         ports:
           web:
-            redirectTo:
-              port: websecure
+            redirections:
+              entryPoint:
+                to: websecure
+                scheme: https
     TRAEFIK_EOF
 
     systemctl restart k3s

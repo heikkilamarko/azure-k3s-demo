@@ -179,6 +179,22 @@ resource "azurerm_linux_virtual_machine" "demo" {
           password: "${azurerm_container_registry.demo.admin_password}"
     REGISTRIES_EOF
 
+    mkdir -p /var/lib/rancher/k3s/server/manifests
+
+    cat <<TRAEFIK_EOF > /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+    apiVersion: helm.cattle.io/v1
+    kind: HelmChartConfig
+    metadata:
+      name: traefik
+      namespace: kube-system
+    spec:
+      valuesContent: |-
+        ports:
+          web:
+            redirectTo:
+              port: websecure
+    TRAEFIK_EOF
+
     systemctl restart k3s
   EOF
   )

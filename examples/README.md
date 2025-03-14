@@ -109,3 +109,13 @@ kubectl apply -f cron-job.yaml
 ```bash
 kubectl delete -f cron-job.yaml
 ```
+
+## Host Access
+
+```bash
+kubectl apply -f host-access.yaml
+```
+
+```bash
+kubectl delete -f host-access.yaml
+```

@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: cron-job
+  name: host-access
   namespace: examples
 spec:
   schedule: "* * * * *"
@@ -12,10 +12,12 @@ spec:
       template:
         spec:
           containers:
-            - name: cron-job
-              image: alpine
+            - name: host-access
+              image: curlimages/curl
               command:
                 - /bin/sh
                 - -c
-                - echo "Hello from Kubernetes CronJob!"
+                - curl --fail -X GET http://localhost:8080/host
           restartPolicy: Never
+          hostNetwork: true
+          dnsPolicy: ClusterFirstWithHostNet

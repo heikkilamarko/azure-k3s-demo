@@ -173,40 +173,38 @@ resource "azurerm_linux_virtual_machine" "demo" {
   }
 
   custom_data = base64encode(<<-EOF
-    #!/bin/bash
-    set -euo pipefail
+    #cloud-config
+    package_reboot_if_required: true
+    package_update: true
+    package_upgrade: true
 
-    curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
+    write_files:
+      - path: /etc/rancher/k3s/registries.yaml
+        content: |
+          configs:
+            ${azurerm_container_registry.demo.name}.azurecr.io:
+              auth:
+                username: "${azurerm_container_registry.demo.admin_username}"
+                password: "${azurerm_container_registry.demo.admin_password}"
 
-    mkdir -p /etc/rancher/k3s
+      - path: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+        content: |
+          apiVersion: helm.cattle.io/v1
+          kind: HelmChartConfig
+          metadata:
+            name: traefik
+            namespace: kube-system
+          spec:
+            valuesContent: |-
+              ports:
+                web:
+                  redirections:
+                    entryPoint:
+                      to: websecure
+                      scheme: https
 
-    cat <<REGISTRIES_EOF > /etc/rancher/k3s/registries.yaml
-    configs:
-      "${azurerm_container_registry.demo.name}.azurecr.io":
-        auth:
-          username: "${azurerm_container_registry.demo.admin_username}"
-          password: "${azurerm_container_registry.demo.admin_password}"
-    REGISTRIES_EOF
-
-    mkdir -p /var/lib/rancher/k3s/server/manifests
-
-    cat <<TRAEFIK_EOF > /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
-    apiVersion: helm.cattle.io/v1
-    kind: HelmChartConfig
-    metadata:
-      name: traefik
-      namespace: kube-system
-    spec:
-      valuesContent: |-
-        ports:
-          web:
-            redirections:
-              entryPoint:
-                to: websecure
-                scheme: https
-    TRAEFIK_EOF
-
-    systemctl restart k3s
+    runcmd:
+      - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
   EOF
   )
 

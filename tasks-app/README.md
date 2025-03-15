@@ -2,6 +2,18 @@
 
 ## Create Azure Resources
 
+### Terraform Backend Resources
+
+```bash
+terraform -chdir=infra_tf init
+```
+
+```bash
+terraform -chdir=infra_tf apply
+```
+
+### Infra Resources
+
 ```bash
 terraform -chdir=infra init
 ```

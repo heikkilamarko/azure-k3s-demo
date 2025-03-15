@@ -8,6 +8,15 @@ variable "location" {
   type        = string
 }
 
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "rg-k3s-demo-app-tf"
+    storage_account_name = "stk3sdemoapptf"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
+}
+
 provider "azurerm" {
   features {}
   subscription_id = var.azure_subscription_id

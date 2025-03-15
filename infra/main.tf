@@ -145,7 +145,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
   resource_group_name             = azurerm_resource_group.demo.name
   location                        = azurerm_resource_group.demo.location
   network_interface_ids           = [azurerm_network_interface.demo.id]
-  size                            = "Standard_F2"
+  size                            = "Standard_D2as_v5"
   admin_username                  = "azureuser"
   disable_password_authentication = true
 
@@ -168,7 +168,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "ubuntu-24_04-lts"
-    sku       = "server-gen1"
+    sku       = "server"
     version   = "latest"
   }
 

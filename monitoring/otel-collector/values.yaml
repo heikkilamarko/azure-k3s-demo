@@ -15,6 +15,10 @@ resources:
 presets:
   logsCollection:
     enabled: true
+  kubernetesAttributes:
+    enabled: true
+  kubeletMetrics:
+    enabled: true
 
 config:
   exporters:
@@ -33,5 +37,8 @@ config:
         exporters:
           - azuremonitor
         receivers: null
-      metrics: null
+      metrics:
+        exporters:
+          - azuremonitor
+        receivers: null
       traces: null

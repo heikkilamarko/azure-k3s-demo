@@ -43,6 +43,14 @@ resource "azurerm_log_analytics_workspace" "demo" {
   location            = azurerm_resource_group.demo.location
 }
 
+resource "azurerm_application_insights" "demo" {
+  name                = "appi-k3s-demo"
+  resource_group_name = azurerm_resource_group.demo.name
+  location            = azurerm_resource_group.demo.location
+  workspace_id        = azurerm_log_analytics_workspace.demo.id
+  application_type    = "other"
+}
+
 resource "azurerm_container_registry" "demo" {
   name                = "crk3sdemo"
   resource_group_name = azurerm_resource_group.demo.name
@@ -235,5 +243,10 @@ output "log_analytics_workspace_id" {
 
 output "log_analytics_workspace_shared_key" {
   value     = azurerm_log_analytics_workspace.demo.primary_shared_key
+  sensitive = true
+}
+
+output "application_insights_connection_string" {
+  value     = azurerm_application_insights.demo.connection_string
   sensitive = true
 }

@@ -1,0 +1,37 @@
+mode: daemonset
+
+image:
+  repository: otel/opentelemetry-collector-contrib
+
+extraEnvsFrom:
+  - secretRef:
+      name: opentelemetry-collector
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+presets:
+  logsCollection:
+    enabled: true
+
+config:
+  exporters:
+    azuremonitor:
+      connection_string: ${env:APPLICATIONINSIGHTS_CONNECTION_STRING}
+
+  receivers:
+    jaeger: null
+    otlp: null
+    prometheus: null
+    zipkin: null
+
+  service:
+    pipelines:
+      logs:
+        exporters:
+          - azuremonitor
+        receivers: null
+      metrics: null
+      traces: null

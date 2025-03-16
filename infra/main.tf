@@ -49,6 +49,7 @@ resource "azurerm_application_insights" "demo" {
   location            = azurerm_resource_group.demo.location
   workspace_id        = azurerm_log_analytics_workspace.demo.id
   application_type    = "other"
+  retention_in_days   = 30
 }
 
 resource "azurerm_container_registry" "demo" {

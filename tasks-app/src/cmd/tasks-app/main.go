@@ -18,6 +18,8 @@ type Task struct {
 
 func getTasksHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		slog.Info("get tasks", "method", r.Method, "url", r.URL.String())
+
 		rows, err := db.QueryContext(r.Context(), "SELECT id, name, created_at FROM tasks_app.task")
 		if err != nil {
 			slog.Error("failed to query tasks", "error", err)
@@ -46,6 +48,8 @@ func getTasksHandler(db *sql.DB) http.HandlerFunc {
 }
 
 func main() {
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stdout, nil)))
+
 	dbConnectionString := os.Getenv("DB_CONNECTION_STRING")
 	if dbConnectionString == "" {
 		slog.Error("database connection string not set")

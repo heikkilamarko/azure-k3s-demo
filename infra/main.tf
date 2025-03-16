@@ -18,7 +18,11 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  features {
+    log_analytics_workspace {
+      permanently_delete_on_destroy = true
+    }
+  }
   subscription_id = var.azure_subscription_id
 }
 
@@ -29,6 +33,12 @@ resource "azurerm_resource_group" "demo" {
 
 resource "azurerm_user_assigned_identity" "demo" {
   name                = "id-k3s-demo"
+  resource_group_name = azurerm_resource_group.demo.name
+  location            = azurerm_resource_group.demo.location
+}
+
+resource "azurerm_log_analytics_workspace" "demo" {
+  name                = "log-k3s-demo"
   resource_group_name = azurerm_resource_group.demo.name
   location            = azurerm_resource_group.demo.location
 }
@@ -217,4 +227,13 @@ resource "azurerm_linux_virtual_machine" "demo" {
 
 output "vm_public_ip" {
   value = azurerm_public_ip.demo.ip_address
+}
+
+output "log_analytics_workspace_id" {
+  value = azurerm_log_analytics_workspace.demo.workspace_id
+}
+
+output "log_analytics_workspace_shared_key" {
+  value     = azurerm_log_analytics_workspace.demo.primary_shared_key
+  sensitive = true
 }

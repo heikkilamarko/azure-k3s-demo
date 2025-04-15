@@ -90,16 +90,6 @@ curl -k "https://www.$INGRESS_HOST"
 envsubst < web-app-letsencrypt-godaddy.yaml | kubectl delete -f -
 ```
 
-## NATS Server
-
-```bash
-kubectl apply -f nats-server.yaml
-```
-
-```bash
-kubectl delete -f nats-server.yaml
-```
-
 ## Cron Job
 
 ```bash

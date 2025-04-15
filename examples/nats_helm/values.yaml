@@ -1,0 +1,11 @@
+config:
+  jetstream:
+    enabled: true
+
+service:
+  merge:
+    spec:
+      type: LoadBalancer
+
+natsBox:
+  enabled: false

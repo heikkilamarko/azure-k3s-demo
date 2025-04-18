@@ -7,4 +7,4 @@ RUN /opt/keycloak/bin/kc.sh build
 
 FROM quay.io/keycloak/keycloak:20.0.5
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start"]
+ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "start", "--optimized"]

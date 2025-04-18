@@ -58,7 +58,7 @@ spec:
           image: crk3sdemo.azurecr.io/keycloak:${IMAGE_TAG}
           ports:
             - containerPort: 8080
-            - containerPort: 7600
+            - containerPort: 7800
           env:
             - name: KEYCLOAK_ADMIN
               value: admin
@@ -80,14 +80,10 @@ spec:
               value: admin
             - name: KC_DB_PASSWORD
               value: S3c_r3t!
-            - name: JGROUPS_DISCOVERY_PROTOCOL
-              value: dns.DNS_PING
-            - name: JGROUPS_DISCOVERY_PROPERTIES
-              value: "dns_query=keycloak-headless.default.svc.cluster.local"
-            - name: CACHE_OWNERS_COUNT
-              value: "2"
-            - name: CACHE_OWNERS_AUTH_SESSIONS_COUNT
-              value: "2"
+            - name: KC_CACHE_STACK
+              value: kubernetes
+            - name: JAVA_OPTS_APPEND
+              value: -Djgroups.dns.query=keycloak-headless.examples.svc.cluster.local
           livenessProbe:
             httpGet:
               path: /auth/health/live
@@ -114,7 +110,7 @@ spec:
   ports:
     - port: 8080
       name: http
-    - port: 7600
+    - port: 7800
       name: jgroups
   clusterIP: None
   selector:

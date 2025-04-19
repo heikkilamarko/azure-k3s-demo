@@ -1,0 +1,188 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres
+  namespace: examples
+data:
+  POSTGRES_DB: keycloak
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres
+  namespace: examples
+stringData:
+  POSTGRES_USER: admin
+  POSTGRES_PASSWORD: S3c_r3t!
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres
+  namespace: examples
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: examples
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          envFrom:
+            - configMapRef:
+                name: postgres
+            - secretRef:
+                name: postgres
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres
+          ports:
+            - containerPort: 5432
+      volumes:
+        - name: postgres
+          persistentVolumeClaim:
+            claimName: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: examples
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak
+  namespace: examples
+data:
+  KC_HOSTNAME: keycloak.local
+  KC_PROXY: edge
+  KC_HTTP_RELATIVE_PATH: /auth
+  KC_HEALTH_ENABLED: "true"
+  KC_DB: postgres
+  KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+  KC_CACHE_STACK: kubernetes
+  JAVA_OPTS_APPEND: "-Djgroups.dns.query=keycloak-headless.examples.svc.cluster.local"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak
+  namespace: examples
+stringData:
+  KEYCLOAK_ADMIN: admin
+  KEYCLOAK_ADMIN_PASSWORD: S3c_r3t!
+  KC_DB_USERNAME: admin
+  KC_DB_PASSWORD: S3c_r3t!
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: keycloak
+  namespace: examples
+spec:
+  serviceName: keycloak-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: crk3sdemo.azurecr.io/keycloak:${IMAGE_TAG}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+            - containerPort: 7800
+          envFrom:
+            - configMapRef:
+                name: keycloak
+            - secretRef:
+                name: keycloak
+          livenessProbe:
+            httpGet:
+              path: /auth/health/live
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /auth/health/ready
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+            timeoutSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak-headless
+  namespace: examples
+spec:
+  selector:
+    app: keycloak
+  clusterIP: None
+  ports:
+    - port: 8080
+      name: http
+    - port: 7800
+      name: jgroups
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: examples
+spec:
+  selector:
+    app: keycloak
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak
+  namespace: examples
+spec:
+  rules:
+    - host: keycloak.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 80

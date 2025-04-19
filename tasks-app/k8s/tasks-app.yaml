@@ -29,12 +29,14 @@ spec:
       initContainers:
         - name: tasks-app-migrations
           image: crk3sdemo.azurecr.io/tasks-app-migrations:${IMAGE_TAG}
+          imagePullPolicy: Always
           envFrom:
             - secretRef:
                 name: tasks-app
       containers:
         - name: tasks-app
           image: crk3sdemo.azurecr.io/tasks-app:${IMAGE_TAG}
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:

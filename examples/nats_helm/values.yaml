@@ -1,6 +1,20 @@
 config:
+  cluster:
+    enabled: true
+    replicas: 3
+
   jetstream:
     enabled: true
+
+  merge:
+    accounts:
+      A:
+        users:
+          - { user: a, password: a }
+      B:
+        users:
+          - { user: b, password: b }
+    system_account: A
 
 service:
   merge:

@@ -1,0 +1,41 @@
+zitadel:
+  masterkey: MasterkeyNeedsToHave32Characters
+
+  configmapConfig:
+    ExternalSecure: true
+    ExternalDomain: zitadel.local
+    TLS:
+      Enabled: false
+    Database:
+      Postgres:
+        Host: postgresql
+        Port: 5432
+        Database: zitadel
+        MaxOpenConns: 20
+        MaxIdleConns: 10
+        MaxConnLifetime: 30m
+        MaxConnIdleTime: 5m
+        User:
+          SSL:
+            Mode: disable
+        Admin:
+          SSL:
+            Mode: disable
+
+  secretConfig:
+    Database:
+      Postgres:
+        User:
+          Username: zitadel
+          Password: S3c_r3t!
+        Admin:
+          Username: postgres
+          Password: S3c_r3t!
+
+ingress:
+  enabled: true
+  hosts:
+    - host: zitadel.local
+      paths:
+        - path: /
+          pathType: Prefix

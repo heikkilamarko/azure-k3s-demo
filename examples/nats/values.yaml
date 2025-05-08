@@ -6,6 +6,13 @@ config:
   jetstream:
     enabled: true
 
+  websocket:
+    enabled: true
+    ingress:
+      enabled: true
+      hosts:
+        - nats.local
+
   merge:
     accounts:
       SYS:

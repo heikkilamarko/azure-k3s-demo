@@ -6,6 +6,14 @@ zitadel:
     ExternalDomain: zitadel.local
     TLS:
       Enabled: false
+    FirstInstance:
+      Org:
+        Machine:
+          Machine:
+            Username: zitadel-admin-sa
+            Name: Admin
+          MachineKey:
+            Type: 1
     Database:
       Postgres:
         Host: postgresql
@@ -31,6 +39,10 @@ zitadel:
         Admin:
           Username: postgres
           Password: S3c_r3t!
+
+service:
+  annotations:
+    traefik.ingress.kubernetes.io/service.serversscheme: h2c
 
 ingress:
   enabled: true

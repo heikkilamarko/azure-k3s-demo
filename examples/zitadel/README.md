@@ -1,4 +1,4 @@
-# ZITADEL Helm Chart Example
+# ZITADEL Example
 
 ## Add the chart repository
 

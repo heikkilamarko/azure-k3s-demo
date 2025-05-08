@@ -1,4 +1,4 @@
-# PostgreSQL Helm Chart Example
+# PostgreSQL Example
 
 ## Add the chart repository
 

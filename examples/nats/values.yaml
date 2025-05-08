@@ -8,13 +8,16 @@ config:
 
   merge:
     accounts:
-      A:
+      SYS:
         users:
-          - { user: a, password: a }
-      B:
+          - { user: sys, password: sys }
+
+      EXAMPLE:
+        jetstream: enabled
         users:
-          - { user: b, password: b }
-    system_account: A
+          - { user: example, password: example }
+
+    system_account: SYS
 
 service:
   merge:

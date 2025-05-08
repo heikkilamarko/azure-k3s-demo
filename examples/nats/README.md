@@ -1,4 +1,4 @@
-# NATS Helm Chart Example
+# NATS Example
 
 ## Add the chart repository
 

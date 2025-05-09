@@ -1,2 +1,5 @@
 auth:
   postgresPassword: S3c_r3t!
+
+primary:
+  resourcesPreset: medium

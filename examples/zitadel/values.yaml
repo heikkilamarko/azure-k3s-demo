@@ -6,6 +6,16 @@ zitadel:
     ExternalDomain: zitadel.local
     TLS:
       Enabled: false
+    DefaultInstance:
+      SMTPConfiguration:
+        SMTP:
+          Host: smtp4dev:25
+          User: empty
+          Password: empty
+        TLS: false
+        From: zitadel@zitadel.local
+        FromName: ZITADEL
+        ReplyToAddress: no-reply@zitadel.local
     FirstInstance:
       Org:
         Machine:
@@ -39,6 +49,9 @@ zitadel:
         Admin:
           Username: postgres
           Password: S3c_r3t!
+
+image:
+  tag: latest
 
 service:
   annotations:

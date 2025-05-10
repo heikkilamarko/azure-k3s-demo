@@ -1,10 +1,28 @@
+service:
+  merge:
+    spec:
+      type: LoadBalancer
+
+natsBox:
+  enabled: false
+
 config:
   cluster:
     enabled: true
     replicas: 3
 
+  resolver:
+    enabled: true
+    merge:
+      type: full
+      interval: 2m
+      timeout: 1.9s
+
   jetstream:
     enabled: true
+    fileStore:
+      pvc:
+        size: 10Gi
 
   websocket:
     enabled: true
@@ -14,22 +32,7 @@ config:
         - nats.local
 
   merge:
-    accounts:
-      SYS:
-        users:
-          - { user: sys, password: sys }
-
-      EXAMPLE:
-        jetstream: enabled
-        users:
-          - { user: example, password: example }
-
-    system_account: SYS
-
-service:
-  merge:
-    spec:
-      type: LoadBalancer
-
-natsBox:
-  enabled: false
+    operator: __CHANGE_ME__
+    system_account: __CHANGE_ME__
+    resolver_preload:
+      SYS_ACCOUNT_ID: __CHANGE_ME__

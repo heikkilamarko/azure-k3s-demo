@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql
+  namespace: examples
+data:
+  POSTGRES_DB: postgres
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgresql
+  namespace: examples
+stringData:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: S3c_r3t!
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql
+  namespace: examples
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  namespace: examples
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: ${IMAGE}
+          envFrom:
+            - configMapRef:
+                name: postgresql
+            - secretRef:
+                name: postgresql
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresql
+          ports:
+            - containerPort: 5432
+      volumes:
+        - name: postgresql
+          persistentVolumeClaim:
+            claimName: postgresql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+  namespace: examples
+spec:
+  selector:
+    app: postgresql
+  ports:
+    - port: 5432

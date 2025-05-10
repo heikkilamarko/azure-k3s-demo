@@ -1,31 +1,19 @@
 # PostgreSQL Example
 
-## Add the chart repository
+## Build
 
 ```bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
+./ci.sh <docker_image_tag>
 ```
 
-## Update the chart repository
+## Deploy
 
 ```bash
-helm repo update
+./cd.sh <docker_image_tag>
 ```
 
-## Render chart templates locally
+## Clean Up
 
 ```bash
-helm template postgresql bitnami/postgresql --values values.yaml > manifest.yaml
-```
-
-## Install the chart
-
-```bash
-helm install postgresql bitnami/postgresql --values values.yaml --namespace examples
-```
-
-## Uninstall the chart
-
-```bash
-helm uninstall postgresql --namespace examples
+./cleanup.sh <docker_image_tag>
 ```

@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+cd "$(dirname "$0")"
+
 nats_server="$(terraform -chdir=../../infra output -raw vm_public_ip):4222"
 
 nats auth operator add example

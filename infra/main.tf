@@ -215,6 +215,9 @@ resource "azurerm_linux_virtual_machine" "demo" {
             namespace: kube-system
           spec:
             valuesContent: |-
+              providers:
+                kubernetesIngress:
+                  allowExternalNameServices: true
               ports:
                 web:
                   redirections:

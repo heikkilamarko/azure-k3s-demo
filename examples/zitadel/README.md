@@ -24,6 +24,14 @@ helm template zitadel zitadel/zitadel --values values.yaml > manifest.yaml
 helm install zitadel zitadel/zitadel --values values.yaml --namespace examples
 ```
 
+## ZITADEL Console
+
+https://zitadel.local
+
+| ZITADEL Admin                         | Initial Password |
+| ------------------------------------- | ---------------- |
+| `zitadel-admin@zitadel.zitadel.local` | `Password1!`     |
+
 ## Uninstall the chart
 
 ```bash

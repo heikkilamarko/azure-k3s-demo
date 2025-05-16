@@ -1,4 +1,4 @@
-# Tasks App
+# Web API Example
 
 ## Create Azure Resources
 
@@ -37,7 +37,7 @@ terraform -chdir=infra apply
 ## Test
 
 ```bash
-curl -k https://tasks-app.com/tasks
+curl -k https://web-api.local/tasks
 ```
 
 ## Clean Up

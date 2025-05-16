@@ -20,7 +20,7 @@ func getTasksHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slog.Info("get tasks", "method", r.Method, "url", r.URL.String())
 
-		rows, err := db.QueryContext(r.Context(), "SELECT id, name, created_at FROM tasks_app.task")
+		rows, err := db.QueryContext(r.Context(), "SELECT id, name, created_at FROM web_api.task")
 		if err != nil {
 			slog.Error("failed to query tasks", "error", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)

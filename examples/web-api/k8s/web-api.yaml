@@ -1,56 +1,51 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: tasks-app
----
-apiVersion: v1
 kind: Secret
 metadata:
-  name: tasks-app
-  namespace: tasks-app
+  name: web-api
+  namespace: examples
 stringData:
   DB_CONNECTION_STRING: ${DB_CONNECTION_STRING}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tasks-app
-  namespace: tasks-app
+  name: web-api
+  namespace: examples
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: tasks-app
+      app: web-api
   template:
     metadata:
       labels:
-        app: tasks-app
+        app: web-api
     spec:
       initContainers:
-        - name: tasks-app-migrations
-          image: crk3sdemo.azurecr.io/tasks-app-migrations:${IMAGE_TAG}
+        - name: web-api-migrations
+          image: ${IMAGE_MIGRATIONS}
           imagePullPolicy: Always
           envFrom:
             - secretRef:
-                name: tasks-app
+                name: web-api
       containers:
-        - name: tasks-app
-          image: crk3sdemo.azurecr.io/tasks-app:${IMAGE_TAG}
+        - name: web-api
+          image: ${IMAGE}
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:
             - secretRef:
-                name: tasks-app
+                name: web-api
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: tasks-app
-  namespace: tasks-app
+  name: web-api
+  namespace: examples
 spec:
   selector:
-    app: tasks-app
+    app: web-api
   ports:
     - protocol: TCP
       port: 80
@@ -59,17 +54,17 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: tasks-app
-  namespace: tasks-app
+  name: web-api
+  namespace: examples
 spec:
   rules:
-    - host: tasks-app.com
+    - host: web-api.local
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: tasks-app
+                name: web-api
                 port:
                   number: 80

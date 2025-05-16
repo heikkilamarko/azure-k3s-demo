@@ -1,4 +1,4 @@
-CREATE TABLE tasks_app.task (
+CREATE TABLE web_api.task (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL

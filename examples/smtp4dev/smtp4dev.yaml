@@ -62,7 +62,12 @@ metadata:
   name: smtp4dev
   namespace: examples
 spec:
+  # tls:
+  #   - hosts:
+  #       - smtp4dev.${DOMAIN}
+  #     secretName: letsencrypt-staging-godaddy-tls
   rules:
+    # - host: smtp4dev.${DOMAIN}
     - host: smtp4dev.local
       http:
         paths:

@@ -1,4 +1,4 @@
-# Host Access Example
+# Host Access
 
 ```bash
 kubectl apply -f host-access.yaml

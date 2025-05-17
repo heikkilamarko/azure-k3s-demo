@@ -1,4 +1,4 @@
-# Web API Example
+# Web API
 
 ## Create Azure Resources
 

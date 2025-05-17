@@ -1,4 +1,4 @@
-# PostgreSQL Example
+# PostgreSQL
 
 ## Build
 

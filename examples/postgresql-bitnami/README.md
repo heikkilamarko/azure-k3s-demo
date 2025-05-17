@@ -1,4 +1,4 @@
-# PostgreSQL Example
+# PostgreSQL (Bitnami)
 
 ## Add the chart repository
 

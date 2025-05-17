@@ -3,17 +3,14 @@ kind: Ingress
 metadata:
   name: web-app
   namespace: examples
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-staging-godaddy
-    # cert-manager.io/cluster-issuer: letsencrypt-production-godaddy
 spec:
   tls:
     - hosts:
-        - "*.${DOMAIN}"
-      secretName: web-app-letsencrypt-staging-godaddy-tls
-      # secretName: web-app-letsencrypt-production-godaddy-tls
+        - web-app.${DOMAIN}
+      secretName: letsencrypt-staging-godaddy-tls
+      # secretName: letsencrypt-production-godaddy-tls
   rules:
-    - host: www.${DOMAIN}
+    - host: web-app.${DOMAIN}
       http:
         paths:
           - path: /

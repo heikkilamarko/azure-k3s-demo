@@ -1,4 +1,4 @@
-# smtp4dev Example
+# smtp4dev
 
 ## Deploy
 

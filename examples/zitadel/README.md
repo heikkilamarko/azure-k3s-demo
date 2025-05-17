@@ -1,4 +1,4 @@
-# ZITADEL Example
+# ZITADEL
 
 ## Add the chart repository
 

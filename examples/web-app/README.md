@@ -1,4 +1,4 @@
-# Web App Example
+# Web App
 
 ## Web App
 
@@ -67,7 +67,7 @@ envsubst < web-app-ingress-letsencrypt-godaddy.yaml | kubectl apply -f -
 ```
 
 ```bash
-curl -k "https://www.$DOMAIN"
+curl -k "https://web-app.$DOMAIN"
 ```
 
 ```bash

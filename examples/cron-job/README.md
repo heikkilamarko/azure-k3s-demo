@@ -1,4 +1,4 @@
-# Cron Job Example
+# Cron Job
 
 ```bash
 kubectl apply -f cron-job.yaml

@@ -1,4 +1,4 @@
-# NATS Example
+# NATS
 
 ## Add the chart repository
 

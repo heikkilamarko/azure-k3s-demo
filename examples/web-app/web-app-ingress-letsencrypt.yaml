@@ -3,15 +3,12 @@ kind: Ingress
 metadata:
   name: web-app
   namespace: examples
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-staging
-    # cert-manager.io/cluster-issuer: letsencrypt-production
 spec:
   tls:
     - hosts:
         - ${DOMAIN}
-      secretName: web-app-letsencrypt-staging-tls
-      # secretName: web-app-letsencrypt-production-tls
+      secretName: letsencrypt-staging-tls
+      # secretName: letsencrypt-production-tls
   rules:
     - host: ${DOMAIN}
       http:

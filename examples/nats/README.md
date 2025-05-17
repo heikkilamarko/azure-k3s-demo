@@ -12,7 +12,7 @@ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
 helm repo update
 ```
 
-## Create the NATS auth resources
+## Generate NATS auth configuration
 
 ```bash
 ./nats-auth-create.sh
@@ -38,7 +38,7 @@ helm template nats nats/nats --values values.yaml > manifest.yaml
 helm install nats nats/nats --values values.yaml --namespace examples
 ```
 
-## Push the NATS auth resources to the cluster
+## Deploy the auth configuration to the NATS cluster
 
 ```bash
 ./nats-auth-push.sh

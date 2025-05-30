@@ -33,7 +33,7 @@ chown -R "$USERNAME":"$USERNAME" "$SSH_DIR"
 
 echo "[*] Configuring passwordless sudo for $USERNAME"
 SUDOERS_FILE="/etc/sudoers.d/$USERNAME"
-echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > "$SUDOERS_FILE"
+echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" | EDITOR='tee' visudo -f "$SUDOERS_FILE"
 chmod 440 "$SUDOERS_FILE"
 
 echo "[*] $USERNAME created and configured with passwordless sudo and SSH access."

@@ -198,6 +198,12 @@ resource "azurerm_linux_virtual_machine" "demo" {
     package_upgrade: true
 
     write_files:
+      - path: /etc/ssh/sshd_config.d/99-disable-root.conf
+        content: |
+          PermitRootLogin no
+        owner: root:root
+        permissions: "0644"
+
       - path: /etc/rancher/k3s/registries.yaml
         content: |
           configs:
@@ -227,6 +233,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
                       scheme: https
 
     runcmd:
+      - systemctl restart sshd
       - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
   EOF
   )

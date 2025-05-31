@@ -5,4 +5,4 @@ keycloak_version="$1"
 
 kubectl delete -f "$keycloak_version/keycloak.yaml"
 
-sudo sed -i '' '/keycloak.local/d' /etc/hosts
+sudo sed -i '' '/keycloak.test/d' /etc/hosts

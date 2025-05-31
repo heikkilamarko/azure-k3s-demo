@@ -26,11 +26,11 @@ helm install zitadel zitadel/zitadel --values values.yaml --namespace examples
 
 ## ZITADEL Console
 
-https://zitadel.local
+https://zitadel.test
 
-| ZITADEL Admin                         | Initial Password |
-| ------------------------------------- | ---------------- |
-| `zitadel-admin@zitadel.zitadel.local` | `Password1!`     |
+| ZITADEL Admin                        | Initial Password |
+| ------------------------------------ | ---------------- |
+| `zitadel-admin@zitadel.zitadel.test` | `Password1!`     |
 
 ## Uninstall the chart
 

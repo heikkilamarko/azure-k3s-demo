@@ -29,7 +29,7 @@ config:
     ingress:
       enabled: true
       hosts:
-        - nats.local
+        - nats.test
         # - nats.${DOMAIN}
       # tlsSecretName: letsencrypt-staging-godaddy-tls
     merge:

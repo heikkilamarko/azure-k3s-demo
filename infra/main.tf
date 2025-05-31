@@ -207,7 +207,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
       - path: /etc/rancher/k3s/registries.yaml
         content: |
           configs:
-            registry.local:
+            registry.test:
               auth:
                 username: "${azurerm_container_registry.demo.admin_username}"
                 password: "${azurerm_container_registry.demo.admin_password}"
@@ -239,7 +239,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
                       scheme: https
 
     runcmd:
-      - echo '127.0.0.1 registry.local' >> /etc/hosts
+      - echo '127.0.0.1 registry.test' >> /etc/hosts
       - systemctl restart sshd
       - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
   EOF

@@ -37,7 +37,7 @@ terraform -chdir=infra apply
 ## Test
 
 ```bash
-curl -k https://web-api.local/tasks
+curl -k https://web-api.test/tasks
 ```
 
 ## Clean Up

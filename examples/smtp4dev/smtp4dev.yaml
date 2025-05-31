@@ -68,7 +68,7 @@ spec:
   #     secretName: letsencrypt-staging-godaddy-tls
   rules:
     # - host: smtp4dev.${DOMAIN}
-    - host: smtp4dev.local
+    - host: smtp4dev.test
       http:
         paths:
           - path: /

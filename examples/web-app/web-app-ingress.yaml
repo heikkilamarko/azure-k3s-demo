@@ -5,7 +5,7 @@ metadata:
   namespace: examples
 spec:
   rules:
-    - host: web-app.local
+    - host: web-app.test
       http:
         paths:
           - path: /

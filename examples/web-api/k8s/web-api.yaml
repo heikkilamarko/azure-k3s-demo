@@ -58,7 +58,7 @@ metadata:
   namespace: examples
 spec:
   rules:
-    - host: web-api.local
+    - host: web-api.test
       http:
         paths:
           - path: /

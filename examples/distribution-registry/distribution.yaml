@@ -75,7 +75,7 @@ metadata:
   namespace: examples
 spec:
   rules:
-    - host: registry.local
+    - host: registry.test
       http:
         paths:
           - path: /

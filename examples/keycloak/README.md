@@ -14,12 +14,12 @@
 
 ## Use
 
-Admin Console: https://keycloak.local/auth/admin/master/console/
+Admin Console: https://keycloak.test/auth/admin/master/console/
 
 Follow the well-known URL when testing cluster upgrades, fault tolerance, and other related tasks:
 
 ```bash
-watch curl -s -k https://keycloak.local/auth/realms/master/.well-known/openid-configuration
+watch curl -s -k https://keycloak.test/auth/realms/master/.well-known/openid-configuration
 ```
 
 ## Clean Up

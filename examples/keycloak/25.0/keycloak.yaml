@@ -76,7 +76,7 @@ metadata:
   name: keycloak
   namespace: examples
 data:
-  KC_HOSTNAME: https://keycloak.local/auth
+  KC_HOSTNAME: https://keycloak.test/auth
   KC_HTTP_ENABLED: "true"
   KC_PROXY_HEADERS: forwarded
   KC_HTTP_RELATIVE_PATH: /auth
@@ -177,7 +177,7 @@ metadata:
   namespace: examples
 spec:
   rules:
-    - host: keycloak.local
+    - host: keycloak.test
       http:
         paths:
           - path: /

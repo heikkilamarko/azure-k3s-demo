@@ -76,7 +76,7 @@ metadata:
   name: keycloak
   namespace: examples
 data:
-  KC_HOSTNAME: keycloak.local
+  KC_HOSTNAME: keycloak.test
   KC_PROXY: edge
   KC_HTTP_RELATIVE_PATH: /auth
   KC_HEALTH_ENABLED: "true"
@@ -176,7 +176,7 @@ metadata:
   namespace: examples
 spec:
   rules:
-    - host: keycloak.local
+    - host: keycloak.test
       http:
         paths:
           - path: /

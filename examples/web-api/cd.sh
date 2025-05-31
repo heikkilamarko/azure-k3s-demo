@@ -17,5 +17,5 @@ export DB_CONNECTION_STRING="$db_connection_string"
 
 envsubst < k8s/web-api.yaml | kubectl apply -f -
 
-sudo sed -i '' '/web-api.local/d' /etc/hosts
-sudo sh -c 'echo "$(terraform -chdir=../../infra output -raw vm_public_ip) web-api.local" >> /etc/hosts'
+sudo sed -i '' '/web-api.test/d' /etc/hosts
+sudo sh -c 'echo "$(terraform -chdir=../../infra output -raw vm_public_ip) web-api.test" >> /etc/hosts'

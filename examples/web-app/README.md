@@ -15,7 +15,7 @@ kubectl delete -f web-app.yaml
 ### Traefik Default Certificate
 
 ```bash
-sudo sh -c 'echo "$(terraform -chdir=../../infra output -raw vm_public_ip) web-app.local" >> /etc/hosts'
+sudo sh -c 'echo "$(terraform -chdir=../../infra output -raw vm_public_ip) web-app.test" >> /etc/hosts'
 ```
 
 ```bash
@@ -23,7 +23,7 @@ kubectl apply -f web-app-ingress.yaml
 ```
 
 ```bash
-curl -k https://web-app.local
+curl -k https://web-app.test
 ```
 
 ```bash
@@ -31,7 +31,7 @@ kubectl delete -f web-app-ingress.yaml
 ```
 
 ```bash
-sudo sed -i '' '/web-app.local/d' /etc/hosts
+sudo sed -i '' '/web-app.test/d' /etc/hosts
 ```
 
 ### Let's Encrypt Certificate

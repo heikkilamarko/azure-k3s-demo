@@ -2,6 +2,16 @@
 
 [Official documentation](https://distribution.github.io/distribution/)
 
+## Configure Docker for Insecure Registries
+
+If the registry uses an HTTPS certificate that is not trusted by Docker (for example, a self-signed or internal CA certificate), Docker rejects connections due to TLS verification errors. To prevent this, add the registry domain to Docker’s list of insecure registries by adding or updating the `insecure-registries` entry in the Docker daemon configuration file:
+
+```json
+{
+  "insecure-registries": ["registry.test"]
+}
+```
+
 ## Add Registry Domain to `/etc/hosts`
 
 ```bash

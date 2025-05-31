@@ -1,0 +1,95 @@
+# Distribution Registry
+
+[Official documentation](https://distribution.github.io/distribution/)
+
+## Add Registry Domain to `/etc/hosts`
+
+```bash
+sudo sh -c 'echo "$(terraform -chdir=../../infra output -raw vm_public_ip) registry.local" >> /etc/hosts'
+```
+
+## Generate `htpasswd` for Registry Authentication
+
+```bash
+htpasswd -Bbn "$(terraform -chdir=../../infra output -raw container_registry_username)" "$(terraform -chdir=../../infra output -raw container_registry_password)" > htpasswd
+```
+
+## Create Kubernetes Secret
+
+```bash
+kubectl create secret generic distribution --from-file=htpasswd=htpasswd --namespace examples
+```
+
+## Deploy the Container Registry
+
+```bash
+kubectl apply -f distribution.yaml
+```
+
+## Pull, Tag, and Push an Image
+
+```bash
+docker pull --platform linux/amd64 nginx
+```
+
+```bash
+docker tag nginx registry.local/nginx
+```
+
+```bash
+docker login \
+    --username "$(terraform -chdir=../../infra output -raw container_registry_username)" \
+    --password "$(terraform -chdir=../../infra output -raw container_registry_password)" \
+    registry.local
+```
+
+```bash
+docker push registry.local/nginx
+```
+
+## Registry HTTP API
+
+[HTTP API V2](https://distribution.github.io/distribution/spec/api/)
+
+[Listing Repositories](https://distribution.github.io/distribution/spec/api/#listing-repositories)
+
+```bash
+curl -k -L -u "$(terraform -chdir=../../infra output -raw container_registry_username):$(terraform -chdir=../../infra output -raw container_registry_password)" \
+    https://registry.local/v2/_catalog
+```
+
+[Listing Image Tags](https://distribution.github.io/distribution/spec/api/#listing-image-tags)
+
+```bash
+curl -k -L -u "$(terraform -chdir=../../infra output -raw container_registry_username):$(terraform -chdir=../../infra output -raw container_registry_password)" \
+    https://registry.local/v2/nginx/tags/list
+```
+
+[Existing Manifests](https://distribution.github.io/distribution/spec/api/#existing-manifests)
+
+```bash
+curl -k -L -I -u "$(terraform -chdir=../../infra output -raw container_registry_username):$(terraform -chdir=../../infra output -raw container_registry_password)" \
+    -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+    https://registry.local/v2/nginx/manifests/<tag_or_digest>
+```
+
+[Deleting an Image](https://distribution.github.io/distribution/spec/api/#deleting-an-image)
+
+```bash
+curl -k -L -u "$(terraform -chdir=../../infra output -raw container_registry_username):$(terraform -chdir=../../infra output -raw container_registry_password)" \
+   -X DELETE https://registry.local/v2/nginx/manifests/<digest>
+```
+
+## Cleanup
+
+```bash
+kubectl delete -f distribution.yaml
+```
+
+```bash
+kubectl delete secret distribution --namespace examples
+```
+
+```bash
+sudo sed -i '' '/registry.local/d' /etc/hosts
+```

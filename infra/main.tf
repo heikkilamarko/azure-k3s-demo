@@ -207,6 +207,12 @@ resource "azurerm_linux_virtual_machine" "demo" {
       - path: /etc/rancher/k3s/registries.yaml
         content: |
           configs:
+            registry.local:
+              auth:
+                username: "${azurerm_container_registry.demo.admin_username}"
+                password: "${azurerm_container_registry.demo.admin_password}"
+              tls:
+                insecure_skip_verify: true
             ${azurerm_container_registry.demo.name}.azurecr.io:
               auth:
                 username: "${azurerm_container_registry.demo.admin_username}"
@@ -233,6 +239,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
                       scheme: https
 
     runcmd:
+      - echo '127.0.0.1 registry.local' >> /etc/hosts
       - systemctl restart sshd
       - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
   EOF
@@ -249,16 +256,17 @@ output "vm_public_ip" {
   value = azurerm_public_ip.demo.ip_address
 }
 
-output "log_analytics_workspace_id" {
-  value = azurerm_log_analytics_workspace.demo.workspace_id
-}
-
-output "log_analytics_workspace_shared_key" {
-  value     = azurerm_log_analytics_workspace.demo.primary_shared_key
+output "application_insights_connection_string" {
+  value     = azurerm_application_insights.demo.connection_string
   sensitive = true
 }
 
-output "application_insights_connection_string" {
-  value     = azurerm_application_insights.demo.connection_string
+output "container_registry_username" {
+  value     = azurerm_container_registry.demo.admin_username
+  sensitive = true
+}
+
+output "container_registry_password" {
+  value     = azurerm_container_registry.demo.admin_password
   sensitive = true
 }

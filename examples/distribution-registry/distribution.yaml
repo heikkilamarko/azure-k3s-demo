@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: distribution
+  namespace: examples
+data:
+  OTEL_TRACES_EXPORTER: none
+  REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+  REGISTRY_AUTH_HTPASSWD_REALM: basic-realm
+  REGISTRY_LOG_LEVEL: info
+  REGISTRY_STORAGE_DELETE_ENABLED: "true"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: distribution
+  namespace: examples
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distribution
+  namespace: examples
+spec:
+  selector:
+    matchLabels:
+      app: distribution
+  template:
+    metadata:
+      labels:
+        app: distribution
+    spec:
+      containers:
+        - name: distribution
+          image: registry:3
+          envFrom:
+            - configMapRef:
+                name: distribution
+          volumeMounts:
+            - name: distribution
+              mountPath: /var/lib/registry
+            - name: auth
+              mountPath: /auth
+          ports:
+            - containerPort: 5000
+      volumes:
+        - name: distribution
+          persistentVolumeClaim:
+            claimName: distribution
+        - name: auth
+          secret:
+            secretName: distribution
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: distribution
+  namespace: examples
+spec:
+  selector:
+    app: distribution
+  ports:
+    - port: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: distribution
+  namespace: examples
+spec:
+  rules:
+    - host: registry.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: distribution
+                port:
+                  number: 5000

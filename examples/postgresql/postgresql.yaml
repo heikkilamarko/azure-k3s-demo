@@ -16,23 +16,42 @@ stringData:
   POSTGRES_PASSWORD: S3c_r3t!
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: Service
+metadata:
+  name: postgresql-headless
+  namespace: examples
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app: postgresql
+---
+apiVersion: v1
+kind: Service
 metadata:
   name: postgresql
   namespace: examples
 spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
+  ports:
+    - name: tcp-postgresql
+      port: 5432
+      targetPort: tcp-postgresql
+  selector:
+    app: postgresql
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: postgresql
   namespace: examples
 spec:
+  replicas: 1
+  serviceName: postgresql-headless
   selector:
     matchLabels:
       app: postgresql
@@ -50,22 +69,48 @@ spec:
             - secretRef:
                 name: postgresql
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: postgresql
+            - name: postgresql
+              mountPath: /var/lib/postgresql/data
           ports:
-            - containerPort: 5432
-      volumes:
-        - name: postgresql
-          persistentVolumeClaim:
-            claimName: postgresql
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgresql
-  namespace: examples
-spec:
-  selector:
-    app: postgresql
-  ports:
-    - port: 5432
+            - name: tcp-postgresql
+              containerPort: 5432
+          livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
+          readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "postgres" -h 127.0.0.1 -p 5432
+          resources:
+            limits:
+              cpu: 750m
+              ephemeral-storage: 2Gi
+              memory: 1536Mi
+            requests:
+              cpu: 500m
+              ephemeral-storage: 50Mi
+              memory: 1024Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: postgresql
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"

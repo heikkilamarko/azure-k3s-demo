@@ -8,6 +8,11 @@ variable "location" {
   type        = string
 }
 
+variable "owner" {
+  description = "Owner of the resources, used for tagging"
+  type        = string
+}
+
 terraform {
   backend "azurerm" {
     resource_group_name  = "rg-k3s-demo-tf"
@@ -29,6 +34,10 @@ provider "azurerm" {
 resource "azurerm_resource_group" "demo" {
   name     = "rg-k3s-demo"
   location = var.location
+
+  tags = {
+    owner = var.owner
+  }
 }
 
 resource "azurerm_user_assigned_identity" "demo" {

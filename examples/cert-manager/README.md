@@ -41,7 +41,7 @@ helm repo update
 ```
 
 ```bash
-helm upgrade --install reflector emberstack/reflector
+helm install reflector emberstack/reflector -n cert-manager
 ```
 
 ## Certificate Examples

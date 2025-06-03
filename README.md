@@ -39,7 +39,7 @@ ssh azureuser@$(terraform -chdir=infra output -raw vm_public_ip)
 ### 2. List the K3s Nodes
 
 ```bash
-sudo kubectl get nodes
+kubectl get nodes
 ```
 
 ## Establish an SSH Tunnel for K3s API Access

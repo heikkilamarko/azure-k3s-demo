@@ -278,7 +278,11 @@ resource "azurerm_linux_virtual_machine" "demo" {
               exemptions:
                 usernames: []
                 runtimeClasses: []
-                namespaces: [kube-system, cis-operator-system]
+                namespaces:
+                  - kube-system
+                  - cert-manager
+                  - opentelemetry-collector
+                  - examples
           - name: EventRateLimit
             configuration:
               apiVersion: eventratelimit.admission.k8s.io/v1alpha1
@@ -315,9 +319,9 @@ resource "azurerm_linux_virtual_machine" "demo" {
       - systemctl restart sshd
       - sysctl -p /etc/sysctl.d/90-kubelet.conf
       - mkdir -p -m 700 /var/lib/rancher/k3s/server/logs
-      - chmod -R 600 /var/lib/rancher/k3s/server/tls/*.crt
       - echo "127.0.0.1 registry.test" >> /etc/hosts
       - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
+      - chmod -R 600 /var/lib/rancher/k3s/server/tls/*.crt
   EOF
   )
 

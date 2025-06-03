@@ -213,6 +213,31 @@ resource "azurerm_linux_virtual_machine" "demo" {
         owner: root:root
         permissions: "0644"
 
+      - path: /etc/sysctl.d/90-kubelet.conf
+        content: |
+          vm.panic_on_oom=0
+          vm.overcommit_memory=1
+          kernel.panic=10
+          kernel.panic_on_oops=1
+
+      - path: /etc/rancher/k3s/config.yaml.d/config.yaml
+        content: |
+          protect-kernel-defaults: true
+          secrets-encryption: true
+          kube-apiserver-arg:
+            - "enable-admission-plugins=NodeRestriction,EventRateLimit"
+            - "admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml"
+            - "audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log"
+            - "audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml"
+            - "audit-log-maxage=30"
+            - "audit-log-maxbackup=10"
+            - "audit-log-maxsize=100"
+          kube-controller-manager-arg:
+            - "terminated-pod-gc-threshold=10"
+          kubelet-arg:
+            - "streaming-connection-idle-timeout=5m"
+            - "tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
+
       - path: /etc/rancher/k3s/registries.yaml
         content: |
           configs:
@@ -226,6 +251,45 @@ resource "azurerm_linux_virtual_machine" "demo" {
               auth:
                 username: "${azurerm_container_registry.demo.admin_username}"
                 password: "${azurerm_container_registry.demo.admin_password}"
+
+      - path: /var/lib/rancher/k3s/server/audit.yaml
+        content: |
+          apiVersion: audit.k8s.io/v1
+          kind: Policy
+          rules:
+          - level: Metadata
+
+      - path: /var/lib/rancher/k3s/server/psa.yaml
+        content: |
+          apiVersion: apiserver.config.k8s.io/v1
+          kind: AdmissionConfiguration
+          plugins:
+          - name: PodSecurity
+            configuration:
+              apiVersion: pod-security.admission.config.k8s.io/v1beta1
+              kind: PodSecurityConfiguration
+              defaults:
+                enforce: "restricted"
+                enforce-version: "latest"
+                audit: "restricted"
+                audit-version: "latest"
+                warn: "restricted"
+                warn-version: "latest"
+              exemptions:
+                usernames: []
+                runtimeClasses: []
+                namespaces: [kube-system, cis-operator-system]
+          - name: EventRateLimit
+            configuration:
+              apiVersion: eventratelimit.admission.k8s.io/v1alpha1
+              kind: Configuration
+              limits:
+                - type: Namespace
+                  qps: 50
+                  burst: 100
+                - type: User
+                  qps: 10
+                  burst: 50
 
       - path: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
         content: |
@@ -248,8 +312,11 @@ resource "azurerm_linux_virtual_machine" "demo" {
                       scheme: https
 
     runcmd:
-      - echo '127.0.0.1 registry.test' >> /etc/hosts
       - systemctl restart sshd
+      - sysctl -p /etc/sysctl.d/90-kubelet.conf
+      - mkdir -p -m 700 /var/lib/rancher/k3s/server/logs
+      - chmod -R 600 /var/lib/rancher/k3s/server/tls/*.crt
+      - echo "127.0.0.1 registry.test" >> /etc/hosts
       - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
   EOF
   )

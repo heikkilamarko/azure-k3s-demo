@@ -27,5 +27,5 @@ Run the installation script:
 Launch the example API endpoint with Caddy, listening on port 8080:
 
 ```bash
-caddy respond --listen :8080 "example api on port {{ .Port }}"
+caddy respond --listen :8000 "example api on port {{ .Port }}"
 ```

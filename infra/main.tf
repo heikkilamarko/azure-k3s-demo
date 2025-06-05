@@ -190,7 +190,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
   os_disk {
     name                 = "disk-k3s-demo"
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    storage_account_type = "Premium_LRS"
   }
 
   source_image_reference {

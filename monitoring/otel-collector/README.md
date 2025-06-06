@@ -2,6 +2,14 @@
 
 [OpenTelemetry Docs](https://opentelemetry.io/docs/platforms/kubernetes/helm/)
 
+## Install
+
 ```bash
-./deploy.sh
+./install.sh
+```
+
+## Uninstall
+
+```bash
+./uninstall.sh
 ```

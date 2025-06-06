@@ -28,18 +28,16 @@ terraform -chdir=infra init
 terraform -chdir=infra apply
 ```
 
-## Verify K3s Installation
-
-### 1. Connect to the VM
+## Check SSH Access to the VM
 
 ```bash
 ssh azureuser@$(terraform -chdir=infra output -raw vm_public_ip)
 ```
 
-### 2. List the K3s Nodes
+## Install K3s on the VM
 
 ```bash
-kubectl get nodes
+scripts/vm_install.sh
 ```
 
 ## Establish an SSH Tunnel for K3s API Access

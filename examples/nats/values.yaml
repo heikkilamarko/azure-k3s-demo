@@ -22,7 +22,7 @@ config:
     enabled: true
     fileStore:
       pvc:
-        size: 10Gi
+        size: 4Gi
 
   websocket:
     enabled: true

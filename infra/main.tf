@@ -206,122 +206,29 @@ resource "azurerm_linux_virtual_machine" "demo" {
     package_update: true
     package_upgrade: true
 
-    write_files:
-      - path: /etc/ssh/sshd_config.d/99-disable-root.conf
-        content: |
-          PermitRootLogin no
-        owner: root:root
-        permissions: "0644"
+    bootcmd:
+      - until [ -e /dev/disk/azure/scsi1/lun0 ]; do sleep 1; done
 
-      - path: /etc/sysctl.d/90-kubelet.conf
-        content: |
-          vm.panic_on_oom=0
-          vm.overcommit_memory=1
-          kernel.panic=10
-          kernel.panic_on_oops=1
+    disk_setup:
+      /dev/disk/azure/scsi1/lun0:
+        table_type: gpt
+        layout: true
+        overwrite: false
 
-      - path: /etc/rancher/k3s/config.yaml.d/config.yaml
-        content: |
-          protect-kernel-defaults: true
-          secrets-encryption: true
-          kube-apiserver-arg:
-            - "enable-admission-plugins=NodeRestriction,EventRateLimit"
-            - "admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml"
-            - "audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log"
-            - "audit-policy-file=/var/lib/rancher/k3s/server/audit.yaml"
-            - "audit-log-maxage=30"
-            - "audit-log-maxbackup=10"
-            - "audit-log-maxsize=100"
-          kube-controller-manager-arg:
-            - "terminated-pod-gc-threshold=10"
-          kubelet-arg:
-            - "streaming-connection-idle-timeout=5m"
-            - "tls-cipher-suites=TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
+    fs_setup:
+      - device: /dev/disk/azure/scsi1/lun0
+        filesystem: xfs
+        partition: auto
 
-      - path: /etc/rancher/k3s/registries.yaml
-        content: |
-          configs:
-            registry.test:
-              auth:
-                username: "${azurerm_container_registry.demo.admin_username}"
-                password: "${azurerm_container_registry.demo.admin_password}"
-              tls:
-                insecure_skip_verify: true
-            ${azurerm_container_registry.demo.name}.azurecr.io:
-              auth:
-                username: "${azurerm_container_registry.demo.admin_username}"
-                password: "${azurerm_container_registry.demo.admin_password}"
-
-      - path: /var/lib/rancher/k3s/server/audit.yaml
-        content: |
-          apiVersion: audit.k8s.io/v1
-          kind: Policy
-          rules:
-          - level: Metadata
-
-      - path: /var/lib/rancher/k3s/server/psa.yaml
-        content: |
-          apiVersion: apiserver.config.k8s.io/v1
-          kind: AdmissionConfiguration
-          plugins:
-          - name: PodSecurity
-            configuration:
-              apiVersion: pod-security.admission.config.k8s.io/v1beta1
-              kind: PodSecurityConfiguration
-              defaults:
-                enforce: "restricted"
-                enforce-version: "latest"
-                audit: "restricted"
-                audit-version: "latest"
-                warn: "restricted"
-                warn-version: "latest"
-              exemptions:
-                usernames: []
-                runtimeClasses: []
-                namespaces:
-                  - kube-system
-                  - cert-manager
-                  - opentelemetry-collector
-                  - examples
-          - name: EventRateLimit
-            configuration:
-              apiVersion: eventratelimit.admission.k8s.io/v1alpha1
-              kind: Configuration
-              limits:
-                - type: Namespace
-                  qps: 50
-                  burst: 100
-                - type: User
-                  qps: 10
-                  burst: 50
-
-      - path: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
-        content: |
-          apiVersion: helm.cattle.io/v1
-          kind: HelmChartConfig
-          metadata:
-            name: traefik
-            namespace: kube-system
-          spec:
-            valuesContent: |-
-              globalArguments: []
-              providers:
-                kubernetesIngress:
-                  allowExternalNameServices: true
-              ports:
-                web:
-                  redirections:
-                    entryPoint:
-                      to: websecure
-                      scheme: https
-
-    runcmd:
-      - systemctl restart sshd
-      - sysctl -p /etc/sysctl.d/90-kubelet.conf
-      - mkdir -p -m 700 /var/lib/rancher/k3s/server/logs
-      - echo "127.0.0.1 registry.test" >> /etc/hosts
-      - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
-      - chmod -R 600 /var/lib/rancher/k3s/server/tls/*.crt
+    mounts:
+      - [
+          "/dev/disk/azure/scsi1/lun0-part1",
+          "/var/lib/rancher/k3s",
+          "xfs",
+          "defaults,nofail",
+          "0",
+          "2",
+        ]
   EOF
   )
 
@@ -332,6 +239,22 @@ resource "azurerm_linux_virtual_machine" "demo" {
   }
 }
 
+resource "azurerm_managed_disk" "demo" {
+  name                 = "disk-k3s-demo-data"
+  resource_group_name  = azurerm_resource_group.demo.name
+  location             = azurerm_resource_group.demo.location
+  storage_account_type = "Premium_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = 32
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "demo" {
+  virtual_machine_id = azurerm_linux_virtual_machine.demo.id
+  managed_disk_id    = azurerm_managed_disk.demo.id
+  lun                = "0"
+  caching            = "ReadWrite"
+}
+
 output "vm_public_ip" {
   value = azurerm_public_ip.demo.ip_address
 }
@@ -339,6 +262,10 @@ output "vm_public_ip" {
 output "application_insights_connection_string" {
   value     = azurerm_application_insights.demo.connection_string
   sensitive = true
+}
+
+output "container_registry_login_server" {
+  value = azurerm_container_registry.demo.login_server
 }
 
 output "container_registry_username" {

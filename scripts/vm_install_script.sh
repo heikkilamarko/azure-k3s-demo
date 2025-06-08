@@ -23,6 +23,7 @@ mkdir -p /etc/rancher/k3s/config.yaml.d
 cat <<EOF > /etc/rancher/k3s/config.yaml.d/config.yaml
 protect-kernel-defaults: true
 secrets-encryption: true
+write-kubeconfig-mode: "644"
 kube-apiserver-arg:
   - "enable-admission-plugins=NodeRestriction,EventRateLimit"
   - "admission-control-config-file=/var/lib/rancher/k3s/server/psa.yaml"
@@ -118,6 +119,6 @@ spec:
             scheme: https
 EOF
 
-curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_KUBECONFIG_MODE=644 sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest sh -
 
 chmod -R 600 /var/lib/rancher/k3s/server/tls/*.crt

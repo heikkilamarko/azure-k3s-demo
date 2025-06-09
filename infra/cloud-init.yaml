@@ -1,0 +1,21 @@
+#cloud-config
+package_reboot_if_required: true
+package_update: true
+package_upgrade: true
+
+bootcmd:
+  - until [ -e /dev/disk/azure/scsi1/lun0 ]; do sleep 1; done
+
+disk_setup:
+  /dev/disk/azure/scsi1/lun0:
+    table_type: gpt
+    layout: true
+    overwrite: false
+
+fs_setup:
+  - device: /dev/disk/azure/scsi1/lun0
+    filesystem: xfs
+    partition: auto
+
+mounts:
+  - ["/dev/disk/azure/scsi1/lun0-part1", "/var/lib/rancher/k3s", "xfs", "defaults,nofail", "0", "2"]

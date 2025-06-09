@@ -77,9 +77,9 @@ resource "azurerm_role_assignment" "demo_container_registry" {
 
 resource "azurerm_virtual_network" "demo" {
   name                = "vnet-k3s-demo"
-  address_space       = ["10.0.0.0/16"]
   resource_group_name = azurerm_resource_group.demo.name
   location            = azurerm_resource_group.demo.location
+  address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_subnet" "demo" {
@@ -200,37 +200,7 @@ resource "azurerm_linux_virtual_machine" "demo" {
     version   = "latest"
   }
 
-  custom_data = base64encode(<<-EOF
-    #cloud-config
-    package_reboot_if_required: true
-    package_update: true
-    package_upgrade: true
-
-    bootcmd:
-      - until [ -e /dev/disk/azure/scsi1/lun0 ]; do sleep 1; done
-
-    disk_setup:
-      /dev/disk/azure/scsi1/lun0:
-        table_type: gpt
-        layout: true
-        overwrite: false
-
-    fs_setup:
-      - device: /dev/disk/azure/scsi1/lun0
-        filesystem: xfs
-        partition: auto
-
-    mounts:
-      - [
-          "/dev/disk/azure/scsi1/lun0-part1",
-          "/var/lib/rancher/k3s",
-          "xfs",
-          "defaults,nofail",
-          "0",
-          "2",
-        ]
-  EOF
-  )
+  custom_data = filebase64("cloud-init.yaml")
 
   lifecycle {
     ignore_changes = [

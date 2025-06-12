@@ -12,6 +12,12 @@ helm repo add nats https://nats-io.github.io/k8s/helm/charts/
 helm repo update
 ```
 
+## Create NATS certs
+
+```bash
+./nats-certs-create.sh
+```
+
 ## Generate NATS auth configuration
 
 ```bash
@@ -25,6 +31,12 @@ helm repo update
 ```
 
 Copy the `merge` block from the generated `nats-server.conf/values.yaml` file into the `values.yaml` file.
+
+## Create NATS TLS secret
+
+```bash
+./nats-tls-secret-create.sh
+```
 
 ## Render chart templates locally
 
@@ -48,4 +60,10 @@ helm install nats nats/nats --values values.yaml --namespace examples
 
 ```bash
 helm uninstall nats --namespace examples
+```
+
+## Delete the NATS TLS secret
+
+```bash
+./nats-tls-secret-delete.sh
 ```

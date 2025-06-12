@@ -6,7 +6,16 @@ service:
 natsBox:
   enabled: false
 
+tlsCA:
+  enabled: true
+  secretName: nats-tls
+
 config:
+  nats:
+    tls:
+      enabled: true
+      secretName: nats-tls
+
   cluster:
     enabled: true
     replicas: 3

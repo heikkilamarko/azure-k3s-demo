@@ -35,6 +35,7 @@ nats auth user credential \
 
 nats ctx add azure-k3s-demo-system \
     --server $nats_server \
+    --tlsca "$PWD/certs/ca.crt" \
     --creds "$PWD/system.cred"
 
 nats auth user credential \
@@ -43,4 +44,5 @@ nats auth user credential \
 
 nats ctx add azure-k3s-demo-example \
     --server $nats_server \
+    --tlsca "$PWD/certs/ca.crt" \
     --creds "$PWD/example.cred"

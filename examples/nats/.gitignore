@@ -1,3 +1,4 @@
+certs
 nats-server.conf
 manifest.yaml
 *.cred

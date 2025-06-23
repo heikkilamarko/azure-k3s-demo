@@ -2,12 +2,12 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: certificate-production-godaddy
+  name: certificate-production-cloudflare
   namespace: cert-manager
 spec:
-  secretName: letsencrypt-production-godaddy-tls
+  secretName: letsencrypt-production-cloudflare-tls
   issuerRef:
-    name: letsencrypt-production-godaddy
+    name: letsencrypt-production-cloudflare
     kind: ClusterIssuer
   commonName: "*.${DOMAIN}"
   dnsNames:

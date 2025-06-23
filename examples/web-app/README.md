@@ -54,7 +54,7 @@ curl -k "https://$DOMAIN"
 envsubst < web-app-ingress-letsencrypt.yaml | kubectl delete -f -
 ```
 
-### Let's Encrypt Certificate with GoDaddy DNS
+### Let's Encrypt Certificate with Cloudflare DNS
 
 Prerequisites:
 
@@ -63,7 +63,7 @@ Prerequisites:
 - Create a DNS A record for the domain `$DOMAIN` pointing to the public IP address of the VM.
 
 ```bash
-envsubst < web-app-ingress-letsencrypt-godaddy.yaml | kubectl apply -f -
+envsubst < web-app-ingress-letsencrypt-cloudflare.yaml | kubectl apply -f -
 ```
 
 ```bash
@@ -71,5 +71,5 @@ curl -k "https://web-app.$DOMAIN"
 ```
 
 ```bash
-envsubst < web-app-ingress-letsencrypt-godaddy.yaml | kubectl delete -f -
+envsubst < web-app-ingress-letsencrypt-cloudflare.yaml | kubectl delete -f -
 ```

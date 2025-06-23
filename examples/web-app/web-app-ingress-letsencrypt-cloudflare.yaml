@@ -7,8 +7,8 @@ spec:
   tls:
     - hosts:
         - web-app.${DOMAIN}
-      secretName: letsencrypt-staging-godaddy-tls
-      # secretName: letsencrypt-production-godaddy-tls
+      secretName: letsencrypt-staging-cloudflare-tls
+      # secretName: letsencrypt-production-cloudflare-tls
   rules:
     - host: web-app.${DOMAIN}
       http:

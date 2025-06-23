@@ -65,7 +65,7 @@ ingress:
   # tls:
   #   - hosts:
   #       - zitadel.${DOMAIN}
-  #     secretName: letsencrypt-staging-godaddy-tls
+  #     secretName: letsencrypt-staging-cloudflare-tls
   hosts:
     # - host: zitadel.${DOMAIN}
     - host: zitadel.test

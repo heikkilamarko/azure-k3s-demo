@@ -40,7 +40,7 @@ config:
       hosts:
         - nats.test
         # - nats.${DOMAIN}
-      # tlsSecretName: letsencrypt-staging-godaddy-tls
+      # tlsSecretName: letsencrypt-staging-cloudflare-tls
     merge:
       jwt_cookie: nats.jwt
 

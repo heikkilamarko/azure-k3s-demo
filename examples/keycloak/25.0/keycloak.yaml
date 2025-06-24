@@ -78,7 +78,7 @@ metadata:
 data:
   KC_HOSTNAME: https://keycloak.test/auth
   KC_HTTP_ENABLED: "true"
-  KC_PROXY_HEADERS: forwarded
+  KC_PROXY_HEADERS: xforwarded
   KC_HTTP_RELATIVE_PATH: /auth
   KC_HEALTH_ENABLED: "true"
   KC_DB: postgres

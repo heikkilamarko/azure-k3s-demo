@@ -15,13 +15,13 @@ helm repo update
 ## Render chart templates locally
 
 ```bash
-helm template zitadel zitadel/zitadel --values values.yaml > manifest.yaml
+envsubst < values.yaml | helm template zitadel zitadel/zitadel --values - > manifest.yaml
 ```
 
 ## Install the chart
 
 ```bash
-helm install zitadel zitadel/zitadel --values values.yaml --namespace examples
+envsubst < values.yaml | helm install zitadel zitadel/zitadel --namespace examples --values -
 ```
 
 ## ZITADEL Console

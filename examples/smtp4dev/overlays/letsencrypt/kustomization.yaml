@@ -1,0 +1,12 @@
+resources:
+  - ../../base
+
+patches:
+  - path: patch-ingress.yaml
+  - target:
+      kind: Ingress
+      name: smtp4dev
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: smtp4dev.${DOMAIN}

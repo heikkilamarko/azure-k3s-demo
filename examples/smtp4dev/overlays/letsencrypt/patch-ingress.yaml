@@ -1,0 +1,9 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: smtp4dev
+spec:
+  tls:
+    - hosts:
+        - smtp4dev.${DOMAIN}
+      secretName: letsencrypt-staging-cloudflare-tls

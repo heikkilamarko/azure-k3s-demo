@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: smtp4dev
+spec:
+  rules:
+    - host: smtp4dev.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: smtp4dev
+                port:
+                  number: 80

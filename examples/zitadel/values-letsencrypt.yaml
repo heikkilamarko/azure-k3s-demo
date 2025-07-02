@@ -3,7 +3,7 @@ zitadel:
 
   configmapConfig:
     ExternalSecure: true
-    ExternalDomain: zitadel.test
+    ExternalDomain: zitadel.${DOMAIN}
     TLS:
       Enabled: false
     DefaultInstance:
@@ -13,9 +13,9 @@ zitadel:
           User: empty
           Password: empty
         TLS: false
-        From: zitadel@zitadel.test
+        From: zitadel@zitadel.${DOMAIN}
         FromName: ZITADEL
-        ReplyToAddress: no-reply@zitadel.test
+        ReplyToAddress: no-reply@zitadel.${DOMAIN}
     FirstInstance:
       Org:
         Machine:
@@ -59,8 +59,12 @@ service:
 
 ingress:
   enabled: true
+  tls:
+    - hosts:
+        - zitadel.${DOMAIN}
+      secretName: letsencrypt-staging-cloudflare-tls
   hosts:
-    - host: zitadel.test
+    - host: zitadel.${DOMAIN}
       paths:
         - path: /
           pathType: Prefix

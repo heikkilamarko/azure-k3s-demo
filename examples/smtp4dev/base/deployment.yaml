@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smtp4dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smtp4dev
+  template:
+    metadata:
+      labels:
+        app: smtp4dev
+    spec:
+      containers:
+        - name: smtp4dev
+          image: rnwood/smtp4dev:v3
+          volumeMounts:
+            - mountPath: /smtp4dev
+              name: smtp4dev
+          ports:
+            - containerPort: 80
+            - containerPort: 25
+      volumes:
+        - name: smtp4dev
+          persistentVolumeClaim:
+            claimName: smtp4dev

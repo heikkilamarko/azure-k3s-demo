@@ -41,13 +41,13 @@ Copy the `merge` block from the generated `nats-server.conf/values.yaml` file in
 ## Render chart templates locally
 
 ```bash
-helm template nats nats/nats --values values.yaml > manifest.yaml
+envsubst < values.yaml | helm template nats nats/nats --values - > manifest.yaml
 ```
 
 ## Install the chart
 
 ```bash
-helm install nats nats/nats --values values.yaml --namespace examples
+envsubst < values.yaml | helm install nats nats/nats --namespace examples --values -
 ```
 
 ## Deploy the auth configuration to the NATS cluster

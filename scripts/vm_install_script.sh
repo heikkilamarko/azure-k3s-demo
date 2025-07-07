@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "127.0.0.1 registry.test" >> /etc/hosts
+echo "$VM_PUBLIC_IP registry.test" >> /etc/hosts
 
 cat <<EOF > /etc/ssh/sshd_config.d/99-disable-root.conf
 PermitRootLogin no

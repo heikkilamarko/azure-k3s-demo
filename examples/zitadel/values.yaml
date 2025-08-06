@@ -64,3 +64,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+
+login:
+  ingress:
+    enabled: true

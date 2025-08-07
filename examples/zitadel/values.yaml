@@ -39,6 +39,8 @@ zitadel:
         Admin:
           SSL:
             Mode: disable
+    ServicePing:
+      Enabled: false
 
   secretConfig:
     Database:

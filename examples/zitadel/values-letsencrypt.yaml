@@ -41,6 +41,10 @@ zitadel:
             Mode: disable
     ServicePing:
       Enabled: false
+    Log:
+      Level: warn
+      Formatter:
+        Format: json
 
   secretConfig:
     Database:

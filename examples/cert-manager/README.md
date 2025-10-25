@@ -13,7 +13,7 @@ export CLOUDFLARE_API_TOKEN="__CHANGE_ME__"
 https://cert-manager.io/
 
 ```bash
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.19.1/cert-manager.yaml
 ```
 
 ## Reflector
